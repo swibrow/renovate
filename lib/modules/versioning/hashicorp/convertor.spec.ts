@@ -6,6 +6,7 @@ describe('modules/versioning/hashicorp/convertor', () => {
     ${''}               | ${''}
     ${'4.2.0'}          | ${'4.2.0'}
     ${'4.2.0-alpha'}    | ${'4.2.0-alpha'}
+    ${'4.2.0+alpha'}    | ${'4.2.0+alpha'}
     ${'~> 4.0'}         | ${'^4.0'}
     ${'~> 4.1'}         | ${'^4.1'}
     ${'~> 4.0.0'}       | ${'~4.0.0'}
@@ -13,6 +14,7 @@ describe('modules/versioning/hashicorp/convertor', () => {
     ${'~> 4.1.0'}       | ${'~4.1.0'}
     ${'~> 4.1.1'}       | ${'~4.1.1'}
     ${'~> 4.0.0-alpha'} | ${'~4.0.0-alpha'}
+    ${'~> 4.0.0+alpha'} | ${'~4.0.0+alpha'}
     ${'>= 4.0'}         | ${'>=4.0'}
     ${'<= 4.0'}         | ${'<=4.0'}
     ${'> 4.0'}          | ${'>4.0'}
@@ -20,6 +22,7 @@ describe('modules/versioning/hashicorp/convertor', () => {
     ${'> 4.0, < 5.0'}   | ${'>4.0 <5.0'}
     ${'~> 2.3.4'}       | ${'~2.3.4'}
     ${'0.1.0-beta.0'}   | ${'0.1.0-beta.0'}
+    ${'0.1.0+beta.0'}   | ${'0.1.0+beta.0'}
   `(
     'hashicorp2npm("$hashicorp") === $npm && npm2hashicorp("$npm") === $hashicorp',
     ({ hashicorp, npm }) => {

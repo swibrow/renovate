@@ -18,7 +18,7 @@ export function hashicorp2npm(input: string): string {
     .map((single) => {
       const r = single.match(
         regEx(
-          /^\s*(|=|!=|>|<|>=|<=|~>)\s*v?((\d+)(\.\d+){0,2}([-+][\w.]+)?)\s*$/,
+          /^\s*(|=|!=|>|<|>=|<=|~>)\s*v?((\d+)(\.\d+){0,2}[\w-+]*(\.\d+)*)\s*$/,
         ),
       );
       if (!r) {
@@ -45,11 +45,10 @@ export function hashicorp2npm(input: string): string {
         case '=':
           return version;
         case '~>':
-          const baseVersion = version.split(/[-+]/)[0];
-          if (baseVersion.match(regEx(/^\d+$/))) {
+          if (version.match(regEx(/^\d+$/))) {
             return `>=${version}`;
           }
-          if (baseVersion.match(regEx(/^\d+\.\d+$/))) {
+          if (version.match(regEx(/^\d+\.\d+$/))) {
             return `^${version}`;
           }
           return `~${version}`;
@@ -73,7 +72,7 @@ export function npm2hashicorp(input: string): string {
     .split(' ')
     .map((single) => {
       const r = single.match(
-        regEx(/^(|>|<|>=|<=|~|\^)v?((\d+)(\.\d+){0,2}([-+][\w.]+)?)\s*$/),
+        regEx(/^(|>|<|>=|<=|~|\^)v?((\d+)(\.\d+){0,2}[\w-+]*(\.\d+)*)$/),
       );
       if (!r) {
         throw new Error('invalid npm constraint');
@@ -86,19 +85,18 @@ export function npm2hashicorp(input: string): string {
     .map(({ operator, version }) => {
       switch (operator) {
         case '^': {
-          const [baseVersion, metadata] = version.split(/[-+]/);
-          const metadataSuffix = metadata ? `+${metadata}` : '';
-
-          if (baseVersion.match(regEx(/^\d+$/))) {
+          if (version.match(regEx(/^\d+$/))) {
             return `~> ${version}.0`;
           }
-          const withZero = baseVersion.match(regEx(/^(\d+\.\d+)\.0$/));
+          const withZero = version.match(regEx(/^(\d+\.\d+)\.0$/));
           if (withZero) {
-            return `~> ${withZero[1]}${metadataSuffix}`;
+            return `~> ${withZero[1]}`;
           }
-          const nonZero = baseVersion.match(regEx(/^(\d+\.\d+)\.\d+$/));
+          const nonZero = version.match(regEx(/^(\d+\.\d+)\.\d+$/));
           if (nonZero) {
-            return `~> ${nonZero[1]}${metadataSuffix}`;
+            // not including`>= ${version}`, which makes this less accurate
+            // but makes the results cleaner
+            return `~> ${nonZero[1]}`;
           }
           return `~> ${version}`;
         }

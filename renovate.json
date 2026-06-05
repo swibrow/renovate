@@ -8,7 +8,7 @@
   "ignorePresets": [":ignoreModulesAndTests"],
   "ignorePaths": ["**/node_modules/**", "**/__fixtures__/**", "test/**"],
   "rebaseWhen": "conflicted",
-  "baseBranches": ["$default", "next"],
+  "baseBranchPatterns": ["$default", "next"],
   "dockerfile": {
     "semanticCommitType": "build"
   },
@@ -87,7 +87,7 @@
   "customManagers": [
     {
       "customType": "regex",
-      "fileMatch": ["config/options/index.ts"],
+      "managerFilePatterns": ["/config/options/index.ts/"],
       "matchStrings": [
         "default: '(?<depName>ghcr.io/containerbase/sidecar):(?<currentValue>.*)'"
       ],
